@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Booking - Palatin Hotels</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        :root {
+            --primary-color: #876a3b;
+            --secondary-color: #4a4a4a;
+            --accent-color: #c0a062;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-color) !important;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color) !important;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 10px 25px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transition: transform 0.2s;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .error-message {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-title {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .footer-links a {
+            color: #f8f9fa;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/receptionist/dashboard">
+            <i class="fas fa-hotel"></i> Palatin Hotels
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/bookings/today">
+                        <i class="fas fa-calendar-day"></i> Today's Bookings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/bookings/date-range">
+                        <i class="fas fa-calendar-week"></i> Bookings by Date
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/receptionist/offline-booking">
+                        <i class="fas fa-pen-fancy"></i> Offline Booking
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/room-status">
+                        <i class="fas fa-door-open"></i> Room Status
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/service-requests">
+                        <i class="fas fa-concierge-bell"></i> Service Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/receptionist/cab-requests">
+                        <i class="fas fa-taxi"></i> Cab Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Offline Booking</h2>
+    <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+    <div class="card mb-4">
+        <div class="card-header">Room Statistics</div>
+        <div class="card-body">
+            <p>Total Rooms: <span th:text="${roomStats.totalRooms}"></span></p>
+            <p>Available Rooms: <span th:text="${roomStats.availableRooms}"></span></p>
+            <p>Occupied Rooms: <span th:text="${roomStats.occupiedRooms}"></span></p>
+            <p>Out of Service Rooms: <span th:text="${roomStats.outOfServiceRooms}"></span></p>
+        </div>
+    </div>
+    <div class="mb-4">
+        <h3>Available Rooms</h3>
+        <div class="row">
+            <div class="col-md-4 mb-3" th:each="room : ${availableRooms}">
+                <div class="card room-card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="'Room ' + ${room.roomNumber}"></h5>
+                        <p class="card-text">Type: <span th:text="${room.type}"></span></p>
+                        <p class="card-text">Price: $<span th:text="${room.price}" th:id="'price_' + ${room.id}"></span></p>
+                        <p class="card-text">View: <span th:text="${room.view}"></span></p>
+                        <p class="card-text">Amenities: <span th:text="${room.amenities}"></span></p>
+                        <p class="card-text">Floor: <span th:text="${room.floor}"></span></p>
+                        <div class="form-check">
+                            <input class="form-check-input room-checkbox" type="checkbox" th:value="${room.id}" th:id="'room_' + ${room.id}" th:data-price="${room.price}">
+                            <label class="form-check-label" th:for="'room_' + ${room.id}">Select Room</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${availableRooms == null or availableRooms.isEmpty()}" class="alert alert-info">
+                No available rooms found.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/receptionist/offline-booking/initiate}" th:object="${bookingDTO}" method="post" id="bookingForm">
+                <input type="hidden" th:field="*{hotelId}" th:value="${hotelId}">
+                <input type="hidden" id="roomIdsInput" name="roomIds" th:field="*{roomIds}">
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Guest Name</label>
+                    <input type="text" class="form-control" id="userName" th:field="*{userName}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label">Guest Email</label>
+                    <input type="email" class="form-control" id="userEmail" th:field="*{userEmail}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="checkInDate" class="form-label">Check-In Date</label>
+                    <input type="date" class="form-control" id="checkInDate" th:field="*{checkInDate}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="checkOutDate" class="form-label">Check-Out Date</label>
+                    <input type="date" class="form-control" id="checkOutDate" th:field="*{checkOutDate}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="totalPrice" class="form-label">Total Price</label>
+                    <input type="text" class="form-control" id="totalPrice" th:field="*{totalPrice}" readonly>
+                </div>
+                <div id="roomError" class="error-message">
+                    Please select at least one room.
+                </div>
+                <button type="submit" class="btn btn-primary">Pay with PayPal</button>
+            </form>
+        </div>
+    </div>
+</div>
+<footer class="mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5 class="footer-title">Palatin Hotels</h5>
+                <p>Luxury accommodation for the discerning traveler. Experience comfort, elegance and world-class service.</p>
+                <div class="social-links mt-3">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h5 class="footer-title">Quick Links</h5>
+                <div class="footer-links">
+                    <a href="/receptionist/dashboard">Dashboard</a>
+                    <a href="/receptionist/bookings/today">Today's Bookings</a>
+                    <a href="/receptionist/offline-booking">Create Booking</a>
+                    <a href="/receptionist/room-status">Room Status</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h5 class="footer-title">Contact</h5>
+                <div class="footer-links">
+                    <a href="#"><i class="fas fa-map-marker-alt me-2"></i> 123 Luxury Avenue, City</a>
+                    <a href="#"><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</a>
+                    <a href="#"><i class="fas fa-envelope me-2"></i> <span class="__cf_email__" data-cfemail="c2abaea6af82b3a2afa2b7aaa9afa8b3a2abb4eca1adaf">[email protected]</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2025 Palatin Hotels. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.room-checkbox');
+        const totalPriceInput = document.getElementById('totalPrice');
+        const bookingForm = document.getElementById('bookingForm');
+        const roomError = document.getElementById('roomError');
+        const roomIdsInput = document.getElementById('roomIdsInput');
+        const checkInDateInput = document.getElementById('checkInDate');
+        const checkOutDateInput = document.getElementById('checkOutDate');
+
+        function calculateDays() {
+            const checkIn = new Date(checkInDateInput.value);
+            const checkOut = new Date(checkOutDateInput.value);
+            if (checkIn && checkOut && checkOut > checkIn) {
+                const timeDiff = checkOut - checkIn;
+                return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            }
+            return 1; // Default to 1 day if dates are invalid
+        }
+
+        function updateTotalPrice() {
+            const days = calculateDays();
+            let total = 0;
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const price = parseFloat(checkbox.getAttribute('data-price'));
+                    total += price * days;
+                }
+            });
+            totalPriceInput.value = total.toFixed(2);
+        }
+
+        function updateRoomIds() {
+            const selectedRooms = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            roomIdsInput.value = selectedRooms.join(',');
+            console.log('Updated roomIds:', roomIdsInput.value);
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                updateTotalPrice();
+                updateRoomIds();
+            });
+        });
+
+        checkInDateInput.addEventListener('change', updateTotalPrice);
+        checkOutDateInput.addEventListener('change', updateTotalPrice);
+
+        updateTotalPrice();
+        updateRoomIds();
+
+        bookingForm.addEventListener('submit', function (event) {
+            const selectedRooms = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            if (selectedRooms.length === 0) {
+                event.preventDefault();
+                roomError.style.display = 'block';
+                console.log('Submission prevented: No rooms selected');
+            } else {
+                roomError.style.display = 'none';
+                const formData = new FormData(bookingForm);
+                console.log('Form Data:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                console.log('Selected Room IDs:', selectedRooms);
+            }
+        });
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93eb064c0e9fbfa1',t:'MTc0NzA2NDUzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

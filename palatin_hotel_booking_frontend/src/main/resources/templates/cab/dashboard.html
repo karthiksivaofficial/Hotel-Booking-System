@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cab Booking Dashboard - Palatin Hotels</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/cab/dashboard">Palatin Hotels</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/logout">Logout</a>
+        </div>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h2>Cab Booking Dashboard</h2>
+    <p>View and manage assigned cab booking requests.</p>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>User Email</th>
+            <th>Pickup Location</th>
+            <th>Drop Location</th>
+            <th>Pickup Time</th>
+            <th>Vehicle Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cab : ${cabBookings}">
+            <td th:text="${cab.id}"></td>
+            <td th:text="${cab.userEmail}"></td>
+            <td th:text="${cab.pickupLocation}"></td>
+            <td th:text="${cab.dropLocation}"></td>
+            <td th:text="${cab.pickupTime}"></td>
+            <td th:text="${cab.vehicleType}"></td>
+            <td th:text="${cab.status}"></td>
+            <td>
+                <form th:action="@{/cab/complete/{id}(id=${cab.id})}" method="post" th:if="${cab.status == 'ASSIGNED'}">
+                    <button type="submit" class="btn btn-success btn-sm">Mark as Completed</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

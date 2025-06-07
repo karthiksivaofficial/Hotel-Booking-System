@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Details - Palatin Hotels</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #64748b;
+      --accent: #c8a97e;
+      --light: #f8fafc;
+      --dark: #0f172a;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --purple: #8b5cf6;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+    }
+
+    .navbar {
+      background-color: #fff !important;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      padding: 15px 0;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary) !important;
+    }
+
+    .navbar-brand span {
+      color: var(--accent);
+    }
+
+    .nav-link {
+      font-weight: 500;
+      color: var(--secondary) !important;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary) !important;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      padding: 40px 0 60px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(to bottom right, transparent 49%, #f8fafc 50%);
+    }
+
+    .header-title {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .section-nav {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+      overflow-x: auto;
+      padding: 10px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 100px;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      color: var(--secondary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      padding: 10px;
+    }
+
+    .section-button i {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    .section-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-button.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 5px 15px rgba(30, 58, 138, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .section-button[data-section="info"] { border-color: var(--primary); }
+    .section-button[data-section="reports"] { border-color: var(--info); }
+    .section-button[data-section="staff"] { border-color: var(--success); }
+    .section-button[data-section="rooms"] { border-color: var(--warning); }
+    .section-button[data-section="bookings"] { border-color: var(--danger); }
+    .section-button[data-section="feedback"] { border-color: var(--purple); }
+
+    .section-button.active[data-section="info"] { border-color: var(--primary); color: var(--primary); }
+    .section-button.active[data-section="reports"] { border-color: var(--info); color: var(--info); }
+    .section-button.active[data-section="staff"] { border-color: var(--success); color: var(--success); }
+    .section-button.active[data-section="rooms"] { border-color: var(--warning); color: var(--warning); }
+    .section-button.active[data-section="bookings"] { border-color: var(--danger); color: var(--danger); }
+    .section-button.active[data-section="feedback"] { border-color: var(--purple); color: var(--purple); }
+
+    .content-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      padding: 25px;
+      margin: 0 10px 30px;
+      animation: contentTransition 0.5s ease-out;
+    }
+
+    @keyframes contentTransition {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    .form-select, .form-control {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+      box-shadow: none;
+      transition: all 0.3s;
+    }
+
+    .form-select:focus, .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+      background-color: #1e40af;
+      border-color: #1e40af;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+      border-color: #475569;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(100, 116, 139, 0.3);
+    }
+
+    .table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    .table th {
+      border-top: none;
+      font-weight: 600;
+      color: var(--primary);
+      padding: 12px 15px;
+      background-color: rgba(30, 58, 138, 0.05);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .table td {
+      padding: 15px;
+      vertical-align: middle;
+      border-color: #f1f5f9;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .table tr {
+      transition: all 0.3s;
+    }
+
+    .table tr:hover {
+      background-color: rgba(30, 58, 138, 0.02);
+    }
+
+    .error-message {
+      font-size: 0.9rem;
+      padding: 12px 20px;
+      background-color: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid var(--danger);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      background-color: white;
+      padding: 20px 0;
+      box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .footer-text {
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .section-nav {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding: 10px 5px;
+      }
+
+      .section-button {
+        width: 100px;
+        height: 80px;
+        font-size: 0.8rem;
+      }
+
+      .section-button i {
+        font-size: 1.2rem;
+      }
+
+      .content-panel {
+        padding: 15px;
+        margin: 0 5px 20px;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .table th, .table td {
+        white-space: nowrap;
+      }
+    }
+
+    .content-panel {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    .btn:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="/admin/dashboard">Palatin <span>Hotels</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/dashboard"><i class="fas fa-th-large me-1"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/hotels"><i class="fas fa-hotel me-1"></i> Hotels</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/staff"><i class="fas fa-users me-1"></i> Staff</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/rooms"><i class="fas fa-door-open me-1"></i> Rooms</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/report"><i class="fas fa-chart-line me-1"></i> Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/admin/hotel-cards"><i class="fas fa-list-alt me-1"></i> Hotel Summaries</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/bookings"><i class="fas fa-calendar-check me-1"></i> Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/feedback"><i class="fas fa-comment-alt me-1"></i> Feedback</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="header">
+  <div class="container">
+    <h6 class="header-subtitle">Hotel Administration</h6>
+    <h2 class="header-title" th:text="${details?.hotel?.name} ? ${details.hotel.name} + ' Details' : 'Hotel Details'"></h2>
+    <p class="header-subtitle mt-2">Comprehensive overview of hotel operations and performance</p>
+  </div>
+</div>
+
+<div class="container">
+  <div th:if="${error}" class="error-message" th:text="${error}"></div>
+  <div th:if="${details != null}">
+    <!-- Section Navigation -->
+    <div class="section-nav">
+      <button class="section-button active" data-section="info"><i class="fas fa-hotel"></i> Hotel Info</button>
+      <button class="section-button" data-section="reports" th:if="${report != null}"><i class="fas fa-chart-bar"></i> Reports</button>
+      <button class="section-button" data-section="staff"><i class="fas fa-users"></i> Staff</button>
+      <button class="section-button" data-section="rooms"><i class="fas fa-door-open"></i> Rooms</button>
+      <button class="section-button" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings</button>
+      <button class="section-button" data-section="feedback"><i class="fas fa-comment-alt"></i> Feedback</button>
+    </div>
+
+    <!-- Content Panel -->
+    <div class="content-panel" id="content-panel">
+      <!-- Hotel Info (default) -->
+      <div class="section-content" id="info" style="display: block;">
+        <h3>Hotel Information</h3>
+        <p><strong>Name:</strong> <span th:text="${details.hotel.name} ?: 'N/A'"></span></p>
+        <p><strong>City:</strong> <span th:text="${details.hotel.city} ?: 'N/A'"></span></p>
+        <p><strong>Address:</strong> <span th:text="${details.hotel.address} ?: 'N/A'"></span></p>
+        <p><strong>Manager:</strong> <span th:text="${details.hotel.managerEmail} ?: 'N/A'"></span></p>
+        <p><strong>Floors:</strong> <span th:text="${details.hotel.numberOfFloors} ?: 'N/A'"></span></p>
+      </div>
+
+      <!-- Reports -->
+      <div class="section-content" id="reports" style="display: none;" th:if="${report != null}">
+        <h3>Report Summary (Last 12 Months)</h3>
+        <p><strong>Total Revenue:</strong> $<span th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 2)} ?: '0.00'"></span></p>
+        <p><strong>Total Bookings:</strong> <span th:text="${report.totalBookings} ?: 0"></span></p>
+        <p><strong>Occupancy Rate:</strong> <span th:text="${#numbers.formatPercent(report.occupancyRate, 0, 2)} ?: '0%'"></span></p>
+        <p><strong>Total Registered Users:</strong> <span th:text="${report.totalUsers} ?: 0"></span></p>
+        <h3 class="mt-4">Hotel Growth Metrics (Last 12 Months)</h3>
+        <canvas id="growthChart"></canvas>
+      </div>
+
+      <!-- Staff -->
+      <div class="section-content" id="staff" style="display: none;">
+        <h3>Staff</h3>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Active</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="staff : ${details.staff}">
+              <td th:text="${staff.name} ?: 'N/A'"></td>
+              <td th:text="${staff.email} ?: 'N/A'"></td>
+              <td th:text="${staff.role} ?: 'N/A'"></td>
+              <td th:text="${staff.active} ? 'Yes' : 'No'"></td>
+            </tr>
+            <tr th:if="${details.staff == null or details.staff.isEmpty()}">
+              <td colspan="4" class="text-center">
+                <i class="fas fa-users-slash fa-3x mb-3 text-secondary"></i>
+                <p>No staff available.</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Rooms -->
+      <div class="section-content" id="rooms" style="display: none;">
+        <h3>Room Status</h3>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Room Number</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>View</th>
+              <th>Floor</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="room : ${details.rooms}">
+              <td th:text="${room.roomNumber} ?: 'N/A'"></td>
+              <td th:text="${room.type} ?: 'N/A'"></td>
+              <td th:text="'$' + ${#numbers.formatDecimal(room.price, 0, 2)} ?: '$0.00'"></td>
+              <td th:text="${room.view} ?: 'N/A'"></td>
+              <td th:text="${room.floor} ?: 'N/A'"></td>
+              <td th:text="${room.status} ?: 'N/A'"></td>
+            </tr>
+            <tr th:if="${details.rooms == null or details.rooms.isEmpty()}">
+              <td colspan="6" class="text-center">
+                <i class="fas fa-door-open fa-3x mb-3 text-secondary"></i>
+                <p>No rooms available.</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bookings -->
+      <div class="section-content" id="bookings" style="display: none;">
+        <h3>Bookings</h3>
+        <form th:action="@{/admin/hotel-details(hotelId=${details.hotel.id})}" method="get" class="mb-4">
+          <input type="hidden" name="hotelId" th:value="${details.hotel.id}">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label for="bookingStartDate" class="form-label">Start Date</label>
+              <input type="date" id="bookingStartDate" name="bookingStartDate" class="form-control" th:value="${bookingStartDate}">
+            </div>
+            <div class="col-md-3">
+              <label for="bookingEndDate" class="form-label">End Date</label>
+              <input type="date" id="bookingEndDate" name="bookingEndDate" class="form-control" th:value="${bookingEndDate}">
+            </div>
+            <div class="col-md-3">
+              <label for="bookingStatus" class="form-label">Status</label>
+              <select id="bookingStatus" name="bookingStatus" class="form-select">
+                <option value="" th:selected="${bookingStatus == null or bookingStatus == ''}">All</option>
+                <option value="CONFIRMED" th:selected="${bookingStatus == 'CONFIRMED'}">Confirmed</option>
+                <option value="CHECKED_IN" th:selected="${bookingStatus == 'CHECKED_IN'}">Checked In</option>
+                <option value="CHECKED_OUT" th:selected="${bookingStatus == 'CHECKED_OUT'}">Checked Out</option>
+                <option value="CANCELLED" th:selected="${bookingStatus == 'CANCELLED'}">Cancelled</option>
+              </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-grow-1"><i class="fas fa-filter me-2"></i>Filter Bookings</button>
+              <a th:href="@{/admin/hotel-details(hotelId=${details.hotel.id})}" class="btn btn-secondary flex-grow-1"><i class="fas fa-times me-2"></i>Clear</a>
+            </div>
+          </div>
+        </form>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Guest</th>
+              <th>Room Number</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Total Price</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="booking : ${bookings}">
+              <td th:text="${booking.id} ?: 'N/A'"></td>
+              <td th:text="${booking.userName} ?: 'N/A'"></td>
+              <td th:text="${booking.roomNumber} ?: 'N/A'"></td>
+              <td th:text="${booking.checkInDate} ?: 'N/A'"></td>
+              <td th:text="${booking.checkOutDate} ?: 'N/A'"></td>
+              <td th:text="'$' + ${#numbers.formatDecimal(booking.totalPrice, 0, 2)} ?: '$0.00'"></td>
+              <td th:text="${booking.status} ?: 'N/A'"></td>
+            </tr>
+            <tr th:if="${bookings == null or bookings.isEmpty()}">
+              <td colspan="7" class="text-center">
+                <i class="fas fa-calendar-times fa-3x mb-3 text-secondary"></i>
+                <p>No bookings available.</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section-content" id="feedback" style="display: none;">
+        <h3>Feedback</h3>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>User Email</th>
+              <th>Rating</th>
+              <th>Comment</th>
+              <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="fb : ${feedback}">
+              <td th:text="${fb.userEmail} ?: 'N/A'"></td>
+              <td th:text="${fb.rating} ?: 'N/A'"></td>
+              <td th:text="${fb.comment} ?: 'N/A'"></td>
+              <td th:text="${fb.createdAt} ?: 'N/A'"></td>
+            </tr>
+            <tr th:if="${feedback == null or feedback.isEmpty()}">
+              <td colspan="4" class="text-center">
+                <i class="fas fa-comment-slash fa-3x mb-3 text-secondary"></i>
+                <p>No feedback available.</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a th:href="@{/admin/hotel-cards}" class="btn btn-secondary mb-4"><i class="fas fa-arrow-left me-2"></i>Back to Summaries</a>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="text-center footer-text">
+      <p class="mb-0">© 2025 Palatin Hotels. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    // Growth Chart (Revenue, Bookings, Users)
+    const monthlyRevenue = /*[[${report?.monthlyRevenue}]]*/ [] || [];
+    const monthlyBookings = /*[[${report?.monthlyBookings}]]*/ [] || [];
+    const monthlyUsers = /*[[${report?.monthlyUsers}]]*/ [] || [];
+    const labels = ['12 Months Ago', '11 Months Ago', '10 Months Ago', '9 Months Ago', '8 Months Ago', '7 Months Ago', '6 Months Ago', '5 Months Ago', '4 Months Ago', '3 Months Ago', '2 Months Ago', 'Last Month'];
+
+    // Initialize data with zeros if empty
+    const revenueData = monthlyRevenue.length > 0 ? monthlyRevenue : new Array(labels.length).fill(0);
+    const bookingsData = monthlyBookings.length > 0 ? monthlyBookings : new Array(labels.length).fill(0);
+    const usersData = monthlyUsers.length > 0 ? monthlyUsers : new Array(labels.length).fill(0);
+
+    let chartInstance = null;
+    function initializeChart() {
+      if (labels && labels.length > 0 && document.getElementById('growthChart')) {
+        const growthCtx = document.getElementById('growthChart').getContext('2d');
+        chartInstance = new Chart(growthCtx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Monthly Revenue ($)',
+                data: revenueData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Bookings',
+                data: bookingsData,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Users',
+                data: usersData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Value'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Month'
+                }
+              }
+            }
+          }
+        });
+      } else {
+        console.warn('Chart data incomplete: labels=' + (labels ? labels : 'null'));
+      }
+    }
+
+    // Section switching
+    const sectionButtons = document.querySelectorAll('.section-button');
+    const contentSections = document.querySelectorAll('.section-content');
+    const contentPanel = document.getElementById('content-panel');
+
+    sectionButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons
+        sectionButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+
+        // Hide all content sections
+        contentSections.forEach(section => section.style.display = 'none');
+
+        // Show selected section
+        const sectionId = this.getAttribute('data-section');
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+          selectedSection.style.display = 'block';
+          // Trigger animation
+          contentPanel.style.animation = 'none';
+          contentPanel.offsetHeight; // Trigger reflow
+          contentPanel.style.animation = 'contentTransition 0.5s ease-out';
+
+          // Initialize chart if reports section is selected
+          if (sectionId === 'reports' && chartInstance === null) {
+            initializeChart();
+          }
+        }
+      });
+
+      // Accessibility: Handle keyboard navigation
+      button.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+
+    // Table row hover effects
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach(row => {
+      row.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.05)';
+        this.style.transform = 'translateY(-2px)';
+      });
+
+      row.addEventListener('mouseleave', function() {
+        this.style.boxShadow = 'none';
+        this.style.transform = 'translateY(0)';
+      });
+    });
+
+    // Initialize chart if reports is the default section (unlikely, but for robustness)
+    if (document.getElementById('reports').style.display === 'block') {
+      initializeChart();
+    }
+
+    // Ensure buttons are focusable and scroll into view
+    sectionButtons.forEach(button => {
+      button.addEventListener('focus', function() {
+        this.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      });
+    });
+  });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c13f4cdecb53d6',t:'MTc0NjYyNjQ2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

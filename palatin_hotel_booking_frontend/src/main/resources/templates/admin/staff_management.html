@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Management - Palatin Hotels</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #64748b;
+      --accent: #c8a97e;
+      --light: #f8fafc;
+      --dark: #0f172a;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+    }
+
+    .navbar {
+      background-color: #fff !important;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      padding: 15px 0;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary) !important;
+    }
+
+    .navbar-brand span {
+      color: var(--accent);
+    }
+
+    .nav-link {
+      font-weight: 500;
+      color: var(--secondary) !important;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary) !important;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      padding: 40px 0 60px;
+      margin-bottom: -30px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(to bottom right, transparent 49%, #f8fafc 50%);
+    }
+
+    .header-title {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border: none;
+      margin-bottom: 30px;
+      padding: 25px;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    .form-select, .form-control {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+      box-shadow: none;
+      transition: all 0.3s;
+    }
+
+    .form-select:focus, .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+      background-color: #1e40af;
+      border-color: #1e40af;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+      border-color: #475569;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(100, 116, 139, 0.3);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      border-color: var(--danger);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-warning {
+      background-color: var(--warning);
+      border-color: var(--warning);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .btn-warning:hover {
+      background-color: #d97706;
+      border-color: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    .table th {
+      border-top: none;
+      font-weight: 600;
+      color: var(--primary);
+      padding: 12px 15px;
+      background-color: rgba(30, 58, 138, 0.05);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .table td {
+      padding: 15px;
+      vertical-align: middle;
+      border-color: #f1f5f9;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .table tr {
+      transition: all 0.3s;
+    }
+
+    .table tr:hover {
+      background-color: rgba(30, 58, 138, 0.02);
+    }
+
+    .error-message {
+      font-size: 0.9rem;
+      padding: 12px 20px;
+      background-color: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid var(--danger);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      background-color: white;
+      padding: 20px 0;
+      margin-top: 50px;
+      box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .footer-text {
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 30px 0 50px;
+      }
+
+      .content-card {
+        padding: 15px;
+      }
+
+      .table-responsive {
+        border-radius: 12px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .table th, .table td {
+        white-space: nowrap;
+      }
+    }
+
+    .content-card {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    .btn:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="/admin/dashboard">Palatin <span>Hotels</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/dashboard"><i class="fas fa-th-large me-1"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/hotels"><i class="fas fa-hotel me-1"></i> Hotels</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/admin/staff"><i class="fas fa-users me-1"></i> Staff</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/rooms"><i class="fas fa-door-open me-1"></i> Rooms</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/report"><i class="fas fa-chart-line me-1"></i> Reports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/bookings"><i class="fas fa-calendar-check me-1"></i> Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/feedback"><i class="fas fa-comment-alt me-1"></i> Feedback</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="header">
+  <div class="container">
+    <h6 class="header-subtitle">Staff Administration</h6>
+    <h2 class="header-title">Staff Management</h2>
+    <p class="header-subtitle mt-2">Add, update, and manage staff across all hotel properties</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="content-card">
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <h3>Add/Update Staff</h3>
+    <form th:action="@{/admin/staff}" th:object="${userDTO}" method="post" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="id" class="form-label">Staff ID (for update, leave blank for new staff)</label>
+          <input type="number" class="form-control" id="id" th:field="*{id}">
+        </div>
+        <div class="col-md-6">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" th:field="*{name}" required>
+          <div class="invalid-feedback">Please enter a name.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" th:field="*{email}" required>
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="role" class="form-label">Role</label>
+          <select class="form-select" id="role" th:field="*{role}" required>
+            <option value="">Select role</option>
+            <option value="HOTEL_MANAGER">Hotel Manager</option>
+            <option value="RECEPTIONIST">Receptionist</option>
+            <option value="LAUNDRY">Laundry</option>
+            <option value="CAB">Cab Driver</option>
+          </select>
+          <div class="invalid-feedback">Please select a role.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="hotelId" class="form-label">Hotel ID</label>
+          <input type="number" class="form-control" id="hotelId" th:field="*{hotelId}" required>
+          <div class="invalid-feedback">Please enter a hotel ID.</div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle me-2"></i>Add/Update Staff</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="content-card">
+    <h3>Deactivate Staff</h3>
+    <form th:action="@{/admin/staff/deactivate}" method="post" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="staffId" class="form-label">Staff ID (optional)</label>
+          <input type="number" class="form-control" id="staffId" name="id">
+        </div>
+        <div class="col-md-6">
+          <label for="staffEmail" class="form-label">Staff Email (optional)</label>
+          <input type="email" class="form-control" id="staffEmail" name="email">
+          <div class="invalid-feedback">Please enter a valid staff ID or email.</div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-danger"><i class="fas fa-user-slash me-2"></i>Deactivate Staff</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="content-card">
+    <h3>Toggle Staff Status</h3>
+    <form th:action="@{/admin/staff/toggle-status}" method="post" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="toggleStaffId" class="form-label">Staff ID (optional)</label>
+          <input type="number" class="form-control" id="toggleStaffId" name="id">
+        </div>
+        <div class="col-md-6">
+          <label for="toggleStaffEmail" class="form-label">Staff Email (optional)</label>
+          <input type="email" class="form-control" id="toggleStaffEmail" name="email">
+          <div class="invalid-feedback">Please enter a valid staff ID or email.</div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-warning"><i class="fas fa-toggle-on me-2"></i>Toggle Status</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="content-card">
+    <h3>Existing Staff</h3>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Hotel ID</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="staff : ${staffs}">
+          <td th:text="${staff.id}"></td>
+          <td th:text="${staff.name}"></td>
+          <td th:text="${staff.email}"></td>
+          <td th:text="${staff.role}"></td>
+          <td th:text="${staff.hotelId}"></td>
+          <td th:text="${staff.isActive ? 'Active' : 'Inactive'}"></td>
+        </tr>
+        <tr th:if="${staffs == null or staffs.isEmpty()}">
+          <td colspan="6" class="text-center">
+            <i class="fas fa-users-slash fa-3x mb-3 text-secondary"></i>
+            <p>No staff available.</p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="text-center footer-text">
+      <p class="mb-0">© 2025 Palatin Hotels. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Bootstrap form validation
+    (function () {
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+
+    // Table row hover effects
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach(row => {
+      row.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.05)';
+        this.style.transform = 'translateY(-2px)';
+      });
+
+      row.addEventListener('mouseleave', function() {
+        this.style.boxShadow = 'none';
+        this.style.transform = 'translateY(0)';
+      });
+    });
+  });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c13f4cdecb53d6',t:'MTc0NjYyNjQ2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
